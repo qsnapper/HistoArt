@@ -18,7 +18,7 @@ class Settings(BaseModel):
     supported_formats: set[str] = {"image/jpeg", "image/png", "image/webp", "image/tiff"}
 
     # Available styles
-    available_styles: set[str] = {"elegant_curves", "neon_glow"}
+    available_styles: set[str] = {"elegant_curves", "neon_glow", "watercolor"}
     default_style: str = "elegant_curves"
 
     # Rendering defaults

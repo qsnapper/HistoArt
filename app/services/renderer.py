@@ -4,11 +4,13 @@ from app.services.histogram import HistogramData
 from app.styles.base import BaseStyle, RenderResult
 from app.styles.elegant_curves import ElegantCurvesStyle
 from app.styles.neon_glow import NeonGlowStyle
+from app.styles.watercolor import WatercolorStyle
 
 # Registry of available styles
 STYLE_REGISTRY: dict[str, type[BaseStyle]] = {
     "elegant_curves": ElegantCurvesStyle,
     "neon_glow": NeonGlowStyle,
+    "watercolor": WatercolorStyle,
 }
 
 
