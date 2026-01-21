@@ -25,6 +25,17 @@ class Settings(BaseModel):
 
     # Rendering defaults
     default_smoothing: float = 0.7
+    default_aspect_ratio: float = 1.618  # Golden ratio
+
+    # Available aspect ratios (value: label)
+    available_aspect_ratios: dict[float, str] = {
+        1.618: "Golden Ratio",
+        1.778: "16:9 (Widescreen)",
+        1.333: "4:3 (Classic)",
+        1.0: "1:1 (Square)",
+        1.5: "3:2 (Photo)",
+        2.333: "21:9 (Ultrawide)",
+    }
 
     # OpenRouter API settings (for LLM-enhanced watercolor style)
     openrouter_api_key: str | None = os.environ.get("OPENROUTER_API_KEY")

@@ -19,6 +19,7 @@ async def create_histogram(
     style: str = Form(default=settings.default_style, description="Visual style preset"),
     width: int = Form(default=settings.default_output_width, description="Output width in pixels"),
     smoothing: float = Form(default=settings.default_smoothing, description="Curve smoothing 0.0-1.0"),
+    aspect_ratio: float = Form(default=settings.default_aspect_ratio, description="Output aspect ratio (width/height)"),
 ):
     """
     Generate an artistic RGB histogram visualization from an uploaded image.
@@ -69,6 +70,17 @@ async def create_histogram(
             },
         )
 
+    # Validate aspect_ratio
+    if aspect_ratio not in settings.available_aspect_ratios:
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "error": "INVALID_ASPECT_RATIO",
+                "message": f"Unknown aspect ratio: {aspect_ratio}. "
+                f"Available: {list(settings.available_aspect_ratios.keys())}",
+            },
+        )
+
     # Read image bytes
     image_bytes = await image.read()
 
@@ -93,6 +105,7 @@ async def create_histogram(
             style=style,
             width=width,
             smoothing=smoothing,
+            aspect_ratio=aspect_ratio,
         )
 
         # Encode to base64

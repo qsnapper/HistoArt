@@ -30,6 +30,7 @@ def render_histogram(
     style: str = "elegant_curves",
     width: int = 1200,
     smoothing: float = 0.7,
+    aspect_ratio: float = 1.618,
 ) -> RenderResult:
     """
     Render histogram data using the specified style.
@@ -39,6 +40,7 @@ def render_histogram(
         style: Style preset name
         width: Output width in pixels
         smoothing: Curve smoothing factor 0.0-1.0
+        aspect_ratio: Width-to-height ratio for output image
 
     Returns:
         RenderResult containing PNG bytes and dimensions
@@ -50,6 +52,6 @@ def render_histogram(
         raise ValueError(f"Unknown style: {style}. Available: {list(STYLE_REGISTRY.keys())}")
 
     style_class = STYLE_REGISTRY[style]
-    renderer = style_class(width=width, smoothing=smoothing)
+    renderer = style_class(width=width, smoothing=smoothing, aspect_ratio=aspect_ratio)
 
     return renderer.render(data)

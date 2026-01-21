@@ -33,17 +33,17 @@ class BaseStyle(ABC):
     BLUE_DARK = "#00004A"  # Navy
     BLUE_LIGHT = "#3333FF"  # Brilliant azure
 
-    def __init__(self, width: int = 1200, smoothing: float = 0.7):
+    def __init__(self, width: int = 1200, smoothing: float = 0.7, aspect_ratio: float = 1.618):
         """
         Initialize the style renderer.
 
         Args:
             width: Output width in pixels
             smoothing: Curve smoothing factor 0.0-1.0
+            aspect_ratio: Width-to-height ratio for output image
         """
         self.width = width
-        # Golden ratio for height (1:1.618)
-        self.height = int(width / 1.618)
+        self.height = int(width / aspect_ratio)
         self.smoothing = smoothing
         # DPI for matplotlib (100 DPI means width in pixels = figsize * 100)
         self.dpi = 100

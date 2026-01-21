@@ -377,6 +377,18 @@
                         <label for="smoothing">Smoothing: <span id="smoothingValue">0.7</span></label>
                         <input type="range" id="smoothing" min="0" max="1" value="0.7" step="0.1">
                     </div>
+
+                    <div class="control-group">
+                        <label for="aspectRatio">Aspect Ratio</label>
+                        <select id="aspectRatio">
+                            <option value="1.618" selected>Golden Ratio</option>
+                            <option value="1.778">16:9 (Widescreen)</option>
+                            <option value="1.333">4:3 (Classic)</option>
+                            <option value="1.0">1:1 (Square)</option>
+                            <option value="1.5">3:2 (Photo)</option>
+                            <option value="2.333">21:9 (Ultrawide)</option>
+                        </select>
+                    </div>
                 </div>
 
                 <button class="generate-btn" id="generateBtn" disabled>Generate Histogram</button>
@@ -520,6 +532,7 @@
             formData.append('style', document.getElementById('style').value);
             formData.append('width', widthInput.value);
             formData.append('smoothing', smoothingInput.value);
+            formData.append('aspect_ratio', document.getElementById('aspectRatio').value);
 
             try {
                 const response = await fetch('/api/v1/histogram', {
