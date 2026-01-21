@@ -20,10 +20,10 @@ class OriginalStyle(BaseStyle):
     - Stippled/dotted fill pattern (screen-print friendly for t-shirts)
     """
 
-    # Pure RGB colors
-    RGB_RED = "#FF0000"
-    RGB_GREEN = "#00FF00"
-    RGB_BLUE = "#0000FF"
+    # RGB colors matched to reference (softer, screen-print aesthetic)
+    RGB_RED = "#E85A5A"
+    RGB_GREEN = "#4AE88A"
+    RGB_BLUE = "#5A7ABF"
 
     # Style parameters
     LINE_WIDTH = 2.5
