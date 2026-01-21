@@ -12,10 +12,7 @@ logger = logging.getLogger(__name__)
 OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
 
 
-def transform_to_watercolor(
-    input_image_bytes: bytes,
-    dominant_colors: list[str],
-) -> bytes | None:
+def transform_to_watercolor(input_image_bytes: bytes) -> bytes | None:
     """
     Transform a histogram image into watercolor style via OpenRouter.
 
@@ -24,7 +21,6 @@ def transform_to_watercolor(
 
     Args:
         input_image_bytes: PNG bytes of the minimal histogram to transform
-        dominant_colors: List of hex colors from the source image
 
     Returns:
         PNG image bytes of the transformed watercolor, or None if generation fails
@@ -37,7 +33,7 @@ def transform_to_watercolor(
     base64_image = base64.b64encode(input_image_bytes).decode("utf-8")
     data_url = f"data:image/png;base64,{base64_image}"
 
-    prompt = _build_transform_prompt(dominant_colors)
+    prompt = _build_transform_prompt()
 
     try:
         response = httpx.post(
@@ -98,13 +94,11 @@ def transform_to_watercolor(
         return None
 
 
-def _build_transform_prompt(dominant_colors: list[str]) -> str:
+def _build_transform_prompt() -> str:
     """Build the image transformation prompt."""
-    colors_str = ", ".join(dominant_colors[:5]) if dominant_colors else "varied colors"
+    return """Transform this RGB histogram chart into a watercolor painting on textured paper.
 
-    return f"""Transform this RGB histogram chart into a watercolor painting on textured paper.
-
-CRITICAL: Preserve the curve shapes, positions, and proportions. The red, green, and blue curves must remain in identical positions with the same relative heights.
+CRITICAL: Preserve the three curve shapes, positions, and proportions. The red, green, and blue curves must remain in identical positions with the same relative heights.
 
 FILL TREATMENT:
 - Fill the entire area BENEATH each curve down to the baseline with watercolor wash
@@ -127,13 +121,11 @@ COLOR PALETTE (use these specific watercolor washes):
 COLOR BLENDING:
 - Where curves overlap, use additive color blending with reduced opacity
 - Mimic how translucent watercolor pigments layer to create secondary colors
-- Overlapping areas should show natural cyan, magenta, yellow mixing
+- Overlapping areas should show natural red, green, blue mixing
 
 BACKGROUND:
 - Pure white with subtle paper texture visible through the translucent paint
 - Add a subtle vignette effect to frame the artwork
 - Include generous padding around the histogram
-
-The source image's dominant colors are: {colors_str}
 
 Output only the transformed watercolor painting with no text, labels, or axes."""

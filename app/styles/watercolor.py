@@ -59,10 +59,7 @@ class WatercolorStyle(BaseStyle):
             minimal_result = minimal.render(data)
 
             # Transform it to watercolor style
-            image_bytes = transform_to_watercolor(
-                input_image_bytes=minimal_result.image_bytes,
-                dominant_colors=data.dominant_colors,
-            )
+            image_bytes = transform_to_watercolor(minimal_result.image_bytes)
             if image_bytes:
                 logger.info("Transformed histogram to watercolor via OpenRouter")
                 return RenderResult(
