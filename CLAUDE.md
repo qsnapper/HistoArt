@@ -46,6 +46,7 @@ This is a FastAPI service that transforms images into artistic RGB histogram vis
 2. Implement the `render(data: HistogramData) -> RenderResult` method
 3. Register in `STYLE_REGISTRY` in `app/services/renderer.py`
 4. Add style name to `available_styles` in `app/core/config.py`
+5. Add option to frontend dropdown in `app/static/index.html`
 
 ### Key Design Decisions
 

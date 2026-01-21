@@ -27,4 +27,8 @@ curl -X POST http://localhost:8000/api/v1/histogram \
 ## Available Styles
 
 - `elegant_curves` - Smooth bezier curves with subtle gradients
-- `neon_glow` - Bold vibrant channels with luminous glow effects on dark background
+- `minimal` - Ultra-clean lines with maximum whitespace and subtle colors
+- `neon_glow` - Bold vibrant channels with luminous glow effects
+- `original` - Classic histogram style with stippled fills
+- `tron` - Neon curves with grid overlay
+- `watercolor` - Soft, painterly aesthetic with irregular edges
