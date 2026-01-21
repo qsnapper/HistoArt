@@ -104,10 +104,13 @@ def _build_transform_prompt(dominant_colors: list[str]) -> str:
 
     return f"""Transform this RGB histogram chart into a watercolor painting on textured paper.
 
-CRITICAL: Preserve the EXACT curve shapes, positions, and proportions. The red, green, and blue curves must remain in identical positions with the same relative heights.
+CRITICAL: Preserve the curve shapes, positions, and proportions. The red, green, and blue curves must remain in identical positions with the same relative heights.
 
-LINE TREATMENT:
-- Avoid sharp, distinct lines - use diffuse, feathered boundaries
+FILL TREATMENT:
+- Fill the entire area BENEATH each curve down to the baseline with watercolor wash
+- Each channel (red, green, blue) should be a solid filled shape, like mountains rising from the bottom
+- The top edge of each filled area follows the curve shape
+- Avoid sharp, distinct edges - use diffuse, feathered boundaries
 - Edges should appear to bleed into the surrounding paper
 - Create a natural, fluid aesthetic with soft organic edges
 
