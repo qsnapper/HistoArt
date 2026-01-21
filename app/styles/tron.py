@@ -54,12 +54,12 @@ class TronStyle(BaseStyle):
         grid_dash = (8, 6)
         grid_color_bright = "#00FFFF"  # Bright cyan
 
-        # Grid lines (zorder=1) - clean dashed lines
-        for x_pos in np.linspace(0, 255, 5)[1:-1]:
+        # Grid lines (zorder=1) - rule of thirds (3x3 grid)
+        for x_pos in np.linspace(0, 255, 4)[1:-1]:  # 2 vertical lines at 1/3 and 2/3
             ax.axvline(x=x_pos, color=grid_color_bright, alpha=0.5,
                        linewidth=1.0, linestyle="--", dashes=grid_dash, zorder=1)
 
-        for y_pos in np.linspace(0, 1.05, 4)[1:-1]:
+        for y_pos in np.linspace(0, 1.05, 4)[1:-1]:  # 2 horizontal lines at 1/3 and 2/3
             ax.axhline(y=y_pos, color=grid_color_bright, alpha=0.5,
                        linewidth=1.0, linestyle="--", dashes=grid_dash, zorder=1)
 
