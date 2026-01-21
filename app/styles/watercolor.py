@@ -1,17 +1,26 @@
 """Watercolor histogram style - soft organic edges mimicking watercolor paint."""
 
+import logging
+
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.colors import LinearSegmentedColormap
 from scipy.ndimage import gaussian_filter1d
 
 from app.services.histogram import HistogramData
+from app.services.openrouter import transform_to_watercolor
 from app.styles.base import BaseStyle, RenderResult
+from app.styles.minimal import MinimalStyle
+
+logger = logging.getLogger(__name__)
 
 
 class WatercolorStyle(BaseStyle):
     """
     Soft, organic edges mimicking watercolor paint bleeding.
+
+    Uses LLM-based image generation via OpenRouter when available,
+    falling back to matplotlib rendering otherwise.
 
     Features:
     - Irregular/ragged top edges like paint bleeding on paper
@@ -34,6 +43,39 @@ class WatercolorStyle(BaseStyle):
 
     def render(self, data: HistogramData) -> RenderResult:
         """Render histogram with watercolor style."""
+        # Try LLM-based generation first
+        llm_result = self._try_llm_generation(data)
+        if llm_result:
+            return llm_result
+
+        # Fall back to matplotlib rendering
+        return self._render_matplotlib(data)
+
+    def _try_llm_generation(self, data: HistogramData) -> RenderResult | None:
+        """Attempt to generate watercolor image via OpenRouter img2img."""
+        try:
+            # First, render the minimal histogram as the input reference
+            minimal = MinimalStyle(width=self.width, smoothing=self.smoothing)
+            minimal_result = minimal.render(data)
+
+            # Transform it to watercolor style
+            image_bytes = transform_to_watercolor(
+                input_image_bytes=minimal_result.image_bytes,
+                dominant_colors=data.dominant_colors,
+            )
+            if image_bytes:
+                logger.info("Transformed histogram to watercolor via OpenRouter")
+                return RenderResult(
+                    image_bytes=image_bytes,
+                    width=self.width,
+                    height=self.height,
+                )
+        except Exception as e:
+            logger.warning(f"LLM transformation failed: {e}")
+        return None
+
+    def _render_matplotlib(self, data: HistogramData) -> RenderResult:
+        """Render histogram using matplotlib (fallback)."""
         fig_width = self.width / self.dpi
         fig_height = self.height / self.dpi
         fig, ax = plt.subplots(figsize=(fig_width, fig_height), facecolor=self.PAPER_COLOR)

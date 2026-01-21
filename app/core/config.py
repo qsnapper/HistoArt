@@ -1,5 +1,7 @@
 """Application configuration."""
 
+import os
+
 from pydantic import BaseModel
 
 
@@ -23,6 +25,12 @@ class Settings(BaseModel):
 
     # Rendering defaults
     default_smoothing: float = 0.7
+
+    # OpenRouter API settings (for LLM-enhanced watercolor style)
+    openrouter_api_key: str | None = os.environ.get("OPENROUTER_API_KEY")
+    openrouter_image_model: str = os.environ.get(
+        "OPENROUTER_IMAGE_MODEL", "google/gemini-2.5-flash-image"
+    )
 
 
 settings = Settings()
