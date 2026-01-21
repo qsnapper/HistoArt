@@ -11,19 +11,19 @@ from app.styles.base import BaseStyle, RenderResult
 
 class MinimalStyle(BaseStyle):
     """
-    Ultra-clean lines with maximum whitespace and subtle colors.
+    Ultra-clean lines with maximum whitespace and pure RGB colors.
 
     Features:
     - Transparent background
     - Thin, clean lines without glow effects
-    - Subtle, muted color palette
+    - Pure RGB color palette
     - No fills or decorations
     """
 
-    # Subtle, muted colors
-    MINIMAL_RED = "#CC6666"
-    MINIMAL_GREEN = "#66CC66"
-    MINIMAL_BLUE = "#6666CC"
+    # Pure RGB colors
+    MINIMAL_RED = "#FF0000"
+    MINIMAL_GREEN = "#00FF00"
+    MINIMAL_BLUE = "#0000FF"
 
     def render(self, data: HistogramData) -> RenderResult:
         """Render histogram with minimal style."""
