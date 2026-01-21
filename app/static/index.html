@@ -278,6 +278,61 @@
         .error.visible {
             display: block;
         }
+
+        /* Background color picker */
+        .bg-picker {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .bg-picker-label {
+            font-size: 0.85rem;
+            color: #aaa;
+        }
+
+        .bg-options {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .bg-option {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .bg-option:hover {
+            transform: scale(1.1);
+        }
+
+        .bg-option.selected {
+            border-color: #33FF33;
+            box-shadow: 0 0 8px rgba(51, 255, 51, 0.4);
+        }
+
+        .bg-option.black {
+            background-color: #000000;
+        }
+
+        .bg-option.dark-grey {
+            background-color: #2a2a2a;
+        }
+
+        .bg-option.white {
+            background-color: #ffffff;
+        }
+
+        /* Result wrapper for background color */
+        .result-wrapper {
+            padding: 1rem;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
     </style>
 </head>
 <body>
@@ -306,6 +361,7 @@
                         <select id="style">
                             <option value="elegant_curves">Elegant Curves</option>
                             <option value="neon_glow">Neon Glow</option>
+                            <option value="original">Original</option>
                             <option value="tron">Tron</option>
                             <option value="watercolor">Watercolor</option>
                         </select>
@@ -328,6 +384,15 @@
             <div class="panel">
                 <h2>Result</h2>
 
+                <div class="bg-picker">
+                    <span class="bg-picker-label">Background:</span>
+                    <div class="bg-options">
+                        <div class="bg-option black selected" data-color="#000000" title="Black"></div>
+                        <div class="bg-option dark-grey" data-color="#2a2a2a" title="Dark Grey"></div>
+                        <div class="bg-option white" data-color="#ffffff" title="White"></div>
+                    </div>
+                </div>
+
                 <div class="result-area">
                     <div class="loading" id="loading">
                         <div class="spinner"></div>
@@ -336,7 +401,9 @@
 
                     <div class="error" id="error"></div>
 
-                    <img id="histogramResult" alt="Histogram">
+                    <div class="result-wrapper" id="resultWrapper" style="background-color: #000000;">
+                        <img id="histogramResult" alt="Histogram">
+                    </div>
 
                     <div class="metadata" id="metadata">
                         <div class="metadata-row">
@@ -510,6 +577,18 @@
         function hideError() {
             error.classList.remove('visible');
         }
+
+        // Background color picker
+        const bgOptions = document.querySelectorAll('.bg-option');
+        const resultWrapper = document.getElementById('resultWrapper');
+
+        bgOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                bgOptions.forEach(opt => opt.classList.remove('selected'));
+                option.classList.add('selected');
+                resultWrapper.style.backgroundColor = option.dataset.color;
+            });
+        });
     </script>
 </body>
 </html>

@@ -1,4 +1,6 @@
-"""Tron histogram style - neon curves with grid on black background."""
+"""Tron histogram style - neon curves with grid on transparent background."""
+
+from io import BytesIO
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -9,17 +11,16 @@ from app.styles.base import BaseStyle, RenderResult
 
 class TronStyle(BaseStyle):
     """
-    Tron-inspired visualization with glowing neon curves on black background.
+    Tron-inspired visualization with glowing neon curves on transparent background.
 
     Features:
-    - Pure black background
+    - Transparent background
     - Cyan grid pattern
     - Dashed cyan border frame
     - Bright neon RGB curves with glow effect
     """
 
     # Colors - bright saturated neons
-    BACKGROUND = "#000000"
     GRID_COLOR = "#00FFFF"
     NEON_RED = "#FF0000"
     NEON_GREEN = "#00FF00"
@@ -29,8 +30,8 @@ class TronStyle(BaseStyle):
         """Render histogram with Tron style."""
         fig_width = self.width / self.dpi
         fig_height = self.height / self.dpi
-        fig, ax = plt.subplots(figsize=(fig_width, fig_height), facecolor=self.BACKGROUND)
-        ax.set_facecolor(self.BACKGROUND)
+        fig, ax = plt.subplots(figsize=(fig_width, fig_height), facecolor="none")
+        ax.set_facecolor("none")
 
         x = np.linspace(0, 255, 256)
 
@@ -70,13 +71,6 @@ class TronStyle(BaseStyle):
         border.set_linestyle((0, (8, 6)))  # Match grid dash pattern
         ax.add_patch(border)
 
-        # Black mask using Polygon for guaranteed opacity (zorder=2)
-        from matplotlib.patches import Polygon
-        combined_max = np.maximum(np.maximum(red_smooth, green_smooth), blue_smooth)
-        verts = [(x[0], 0)] + list(zip(x, combined_max)) + [(x[-1], 0)]
-        mask_poly = Polygon(verts, facecolor=self.BACKGROUND, edgecolor='none', zorder=2)
-        ax.add_patch(mask_poly)
-
         # Glow layers (zorder=3)
         glow_layers = [
             (30, 0.03),
@@ -101,12 +95,29 @@ class TronStyle(BaseStyle):
         ax.plot(x, green_smooth, color=self.NEON_GREEN, linewidth=2.5, alpha=1.0, zorder=4)
         ax.plot(x, blue_smooth, color=self.NEON_BLUE, linewidth=2.5, alpha=1.0, zorder=4)
 
-        fig.tight_layout(pad=0.5)
+        fig.subplots_adjust(left=0, right=1, top=1, bottom=0)
 
-        image_bytes = self._save_figure_to_bytes(fig)
+        image_bytes = self._save_figure_to_bytes_transparent(fig)
 
         return RenderResult(
             image_bytes=image_bytes,
             width=self.width,
             height=self.height,
         )
+
+    def _save_figure_to_bytes_transparent(self, fig: plt.Figure) -> bytes:
+        """Save matplotlib figure to PNG bytes with alpha transparency."""
+        buf = BytesIO()
+        fig.savefig(
+            buf,
+            format="png",
+            dpi=self.dpi,
+            bbox_inches="tight",
+            pad_inches=0,
+            transparent=True,
+            facecolor="none",
+            edgecolor="none",
+        )
+        buf.seek(0)
+        plt.close(fig)
+        return buf.read()

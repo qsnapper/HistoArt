@@ -1,5 +1,7 @@
 """Elegant curves histogram style - smooth curves with rich vertical gradients."""
 
+from io import BytesIO
+
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.colors import LinearSegmentedColormap
@@ -16,7 +18,7 @@ class ElegantCurvesStyle(BaseStyle):
     - Smooth curve interpolation
     - Rich vertical gradients from dark to vibrant for each channel
     - Semi-transparent fills that blend where curves overlap
-    - White background with clean styling
+    - Transparent background
     """
 
     def render(self, data: HistogramData) -> RenderResult:
@@ -24,8 +26,8 @@ class ElegantCurvesStyle(BaseStyle):
         # Create figure with golden ratio dimensions
         fig_width = self.width / self.dpi
         fig_height = self.height / self.dpi
-        fig, ax = plt.subplots(figsize=(fig_width, fig_height), facecolor="white")
-        ax.set_facecolor("white")
+        fig, ax = plt.subplots(figsize=(fig_width, fig_height), facecolor="none")
+        ax.set_facecolor("none")
 
         # X values (0-255 for histogram bins)
         x = np.linspace(0, 255, 256)
@@ -50,7 +52,7 @@ class ElegantCurvesStyle(BaseStyle):
 
         fig.subplots_adjust(left=0, right=1, top=1, bottom=0)
 
-        image_bytes = self._save_figure_to_bytes(fig)
+        image_bytes = self._save_figure_to_bytes_transparent(fig)
 
         return RenderResult(
             image_bytes=image_bytes,
@@ -100,3 +102,20 @@ class ElegantCurvesStyle(BaseStyle):
 
         # Clip the gradient image to the curve shape
         im.set_clip_path(poly)
+
+    def _save_figure_to_bytes_transparent(self, fig: plt.Figure) -> bytes:
+        """Save matplotlib figure to PNG bytes with alpha transparency."""
+        buf = BytesIO()
+        fig.savefig(
+            buf,
+            format="png",
+            dpi=self.dpi,
+            bbox_inches="tight",
+            pad_inches=0,
+            transparent=True,
+            facecolor="none",
+            edgecolor="none",
+        )
+        buf.seek(0)
+        plt.close(fig)
+        return buf.read()

@@ -1,8 +1,9 @@
 """Neon glow histogram style - bold vibrant channels with luminous glow effects."""
 
+from io import BytesIO
+
 import matplotlib.pyplot as plt
 import numpy as np
-from matplotlib.colors import to_rgba
 
 from app.services.histogram import HistogramData
 from app.styles.base import BaseStyle, RenderResult
@@ -13,7 +14,7 @@ class NeonGlowStyle(BaseStyle):
     Bold, vibrant channels with luminous glow effects on dark background.
 
     Features:
-    - Dark charcoal background
+    - Transparent background
     - Bright neon colors for RGB channels
     - Multiple layered glows for bloom effect
     - High contrast visualization
@@ -24,16 +25,13 @@ class NeonGlowStyle(BaseStyle):
     NEON_GREEN = "#00FF80"
     NEON_BLUE = "#0080FF"
 
-    # Background
-    BACKGROUND = "#1A1A2E"
-
     def render(self, data: HistogramData) -> RenderResult:
         """Render histogram with neon glow style."""
         # Create figure with golden ratio dimensions
         fig_width = self.width / self.dpi
         fig_height = self.height / self.dpi
-        fig, ax = plt.subplots(figsize=(fig_width, fig_height), facecolor=self.BACKGROUND)
-        ax.set_facecolor(self.BACKGROUND)
+        fig, ax = plt.subplots(figsize=(fig_width, fig_height), facecolor="none")
+        ax.set_facecolor("none")
 
         # X values (0-255 for histogram bins)
         x = np.linspace(0, 255, 256)
@@ -75,14 +73,29 @@ class NeonGlowStyle(BaseStyle):
         ax.set_ylim(0, 1.05)
         ax.axis("off")
 
-        # Add subtle padding
-        fig.tight_layout(pad=0.5)
+        fig.subplots_adjust(left=0, right=1, top=1, bottom=0)
 
-        # Save to bytes
-        image_bytes = self._save_figure_to_bytes(fig)
+        image_bytes = self._save_figure_to_bytes_transparent(fig)
 
         return RenderResult(
             image_bytes=image_bytes,
             width=self.width,
             height=self.height,
         )
+
+    def _save_figure_to_bytes_transparent(self, fig: plt.Figure) -> bytes:
+        """Save matplotlib figure to PNG bytes with alpha transparency."""
+        buf = BytesIO()
+        fig.savefig(
+            buf,
+            format="png",
+            dpi=self.dpi,
+            bbox_inches="tight",
+            pad_inches=0,
+            transparent=True,
+            facecolor="none",
+            edgecolor="none",
+        )
+        buf.seek(0)
+        plt.close(fig)
+        return buf.read()
