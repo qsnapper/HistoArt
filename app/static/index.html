@@ -6,8 +6,23 @@
     <title>HistoArt - Artistic RGB Histograms</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --red: #ff3b3b;
+            --green: #3bff6f;
+            --blue: #3b8bff;
+            --bg-dark: #0a0a0b;
+            --bg-panel: rgba(255, 255, 255, 0.03);
+            --bg-panel-hover: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.08);
+            --text-primary: #ffffff;
+            --text-secondary: #888;
+            --text-muted: #555;
+            --radius: 16px;
+            --radius-sm: 8px;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
@@ -15,83 +30,232 @@
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-dark);
             min-height: 100vh;
-            color: #e0e0e0;
-            padding: 2rem;
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+
+        /* Animated RGB background accent */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background:
+                radial-gradient(circle at 20% 20%, rgba(255, 59, 59, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 80% 20%, rgba(59, 139, 255, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 50% 80%, rgba(59, 255, 111, 0.06) 0%, transparent 40%);
+            animation: bgPulse 15s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes bgPulse {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(-2%, -2%) scale(1.02); }
+            66% { transform: translate(2%, 1%) scale(0.98); }
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1300px;
             margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-top: 1rem;
         }
 
         h1 {
-            text-align: center;
-            font-size: 2.5rem;
+            font-size: 3.5rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
             margin-bottom: 0.5rem;
-            background: linear-gradient(90deg, #FF3333, #33FF33, #3333FF);
+            background: linear-gradient(
+                135deg,
+                var(--red) 0%,
+                var(--red) 33%,
+                var(--green) 33%,
+                var(--green) 66%,
+                var(--blue) 66%,
+                var(--blue) 100%
+            );
+            background-size: 300% 100%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            animation: gradientShift 8s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
         }
 
         .subtitle {
-            text-align: center;
-            color: #888;
-            margin-bottom: 2rem;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            font-weight: 400;
+            margin-bottom: 1.5rem;
         }
 
+        /* RGB accent line */
+        .rgb-line {
+            width: 200px;
+            height: 3px;
+            margin: 0 auto;
+            background: linear-gradient(90deg, var(--red), var(--green), var(--blue));
+            border-radius: 2px;
+            opacity: 0.8;
+        }
+
+        /* Main layout */
         .main-content {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 420px 1fr;
             gap: 2rem;
+            align-items: start;
         }
 
-        @media (max-width: 900px) {
+        @media (max-width: 1000px) {
             .main-content {
                 grid-template-columns: 1fr;
             }
         }
 
+        /* Panels */
         .panel {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            padding: 1.5rem;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: var(--bg-panel);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: var(--radius);
+            padding: 1.75rem;
+            border: 1px solid var(--border);
+            transition: background 0.3s ease;
         }
 
-        .panel h2 {
-            font-size: 1.1rem;
-            margin-bottom: 1rem;
-            color: #fff;
+        .panel:hover {
+            background: var(--bg-panel-hover);
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .panel-header h2 {
+            font-size: 1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-secondary);
+        }
+
+        .panel-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        .panel-icon.upload {
+            background: linear-gradient(135deg, rgba(59, 255, 111, 0.2), rgba(59, 139, 255, 0.2));
+        }
+
+        .panel-icon.result {
+            background: linear-gradient(135deg, rgba(255, 59, 59, 0.2), rgba(59, 139, 255, 0.2));
         }
 
         /* Upload area */
         .upload-area {
-            border: 2px dashed rgba(255, 255, 255, 0.2);
-            border-radius: 8px;
-            padding: 2rem;
+            border: 2px dashed var(--border);
+            border-radius: var(--radius);
+            padding: 2.5rem 1.5rem;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s ease;
-            margin-bottom: 1rem;
+            position: relative;
+            overflow: hidden;
         }
 
-        .upload-area:hover, .upload-area.dragover {
-            border-color: #33FF33;
-            background: rgba(51, 255, 51, 0.05);
+        .upload-area::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg,
+                rgba(255, 59, 59, 0.05),
+                rgba(59, 255, 111, 0.05),
+                rgba(59, 139, 255, 0.05)
+            );
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
 
-        .upload-area p {
-            color: #888;
-            margin-top: 0.5rem;
+        .upload-area:hover::before,
+        .upload-area.dragover::before {
+            opacity: 1;
+        }
+
+        .upload-area:hover,
+        .upload-area.dragover {
+            border-color: var(--green);
+            border-style: solid;
+        }
+
+        .upload-area.dragover {
+            animation: pulse 1s ease infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.01); }
         }
 
         .upload-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 1rem;
+            border-radius: 50%;
+            background: linear-gradient(135deg,
+                rgba(255, 59, 59, 0.1),
+                rgba(59, 255, 111, 0.1),
+                rgba(59, 139, 255, 0.1)
+            );
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .upload-icon svg {
+            color: var(--text-secondary);
+        }
+
+        .upload-area strong {
+            display: block;
+            font-size: 1rem;
             margin-bottom: 0.5rem;
-            color: #888;
+            position: relative;
+        }
+
+        .upload-area p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            position: relative;
         }
 
         #fileInput {
@@ -100,108 +264,301 @@
 
         /* Preview */
         .preview-container {
-            margin-top: 1rem;
+            margin-top: 1.25rem;
             display: none;
+            position: relative;
         }
 
         .preview-container.visible {
             display: block;
         }
 
+        .preview-wrapper {
+            position: relative;
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
         #preview {
-            max-width: 100%;
-            max-height: 200px;
-            border-radius: 8px;
+            width: 100%;
+            max-height: 180px;
+            object-fit: contain;
             display: block;
-            margin: 0 auto;
+        }
+
+        .preview-label {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 0.5rem;
+            background: linear-gradient(transparent, rgba(0,0,0,0.8));
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            font-family: 'JetBrains Mono', monospace;
         }
 
         /* Controls */
         .controls {
             display: flex;
             flex-direction: column;
-            gap: 1rem;
-            margin-top: 1rem;
+            gap: 1.25rem;
+            margin-top: 1.5rem;
         }
 
         .control-group {
             display: flex;
             flex-direction: column;
-            gap: 0.25rem;
+            gap: 0.5rem;
         }
 
         .control-group label {
-            font-size: 0.85rem;
-            color: #aaa;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 500;
         }
 
-        select, input[type="range"] {
+        /* Select styling */
+        select {
             width: 100%;
-            padding: 0.5rem;
-            border-radius: 6px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            background: rgba(0, 0, 0, 0.3);
-            color: #fff;
-            font-size: 1rem;
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            background: rgba(0, 0, 0, 0.4);
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
         }
 
-        select:focus, input[type="range"]:focus {
+        select:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        select:focus {
             outline: none;
-            border-color: #33FF33;
+            border-color: var(--green);
+            box-shadow: 0 0 0 3px rgba(59, 255, 111, 0.1);
+        }
+
+        /* Range slider */
+        .range-container {
+            position: relative;
+        }
+
+        .range-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .range-value {
-            text-align: right;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 0.85rem;
-            color: #888;
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
         }
 
-        /* Button */
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: linear-gradient(90deg, var(--red), var(--green), var(--blue));
+            appearance: none;
+            cursor: pointer;
+            margin-top: 0.5rem;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--text-primary);
+            border: 3px solid var(--bg-dark);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            transition: transform 0.15s ease;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--text-primary);
+            border: 3px solid var(--bg-dark);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+        }
+
+        /* Generate button */
         .generate-btn {
             width: 100%;
-            padding: 1rem;
+            padding: 1rem 1.5rem;
             border: none;
-            border-radius: 8px;
-            background: linear-gradient(90deg, #FF3333, #FF0040);
+            border-radius: var(--radius-sm);
+            background: linear-gradient(135deg, var(--red), #ff6b6b);
             color: white;
             font-size: 1rem;
             font-weight: 600;
+            font-family: inherit;
             cursor: pointer;
             transition: all 0.3s ease;
-            margin-top: 1rem;
+            margin-top: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .generate-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, var(--green), var(--blue));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .generate-btn:hover:not(:disabled)::before {
+            opacity: 1;
+        }
+
+        .generate-btn span {
+            position: relative;
+            z-index: 1;
         }
 
         .generate-btn:hover:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: 0 4px 20px rgba(255, 0, 64, 0.4);
+            box-shadow: 0 8px 30px rgba(255, 59, 59, 0.3);
         }
 
         .generate-btn:disabled {
-            opacity: 0.5;
+            opacity: 0.4;
             cursor: not-allowed;
         }
 
-        /* Result area */
+        /* Result panel */
+        .result-panel {
+            min-height: 500px;
+        }
+
         .result-area {
-            min-height: 300px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            min-height: 400px;
         }
 
-        .result-area.empty {
-            color: #555;
+        /* Background picker */
+        .bg-picker {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .bg-picker-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .bg-options {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .bg-option {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .bg-option::after {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 10px;
+            border: 2px solid transparent;
+            transition: border-color 0.2s ease;
+        }
+
+        .bg-option:hover {
+            transform: scale(1.1);
+        }
+
+        .bg-option.selected::after {
+            border-color: var(--green);
+        }
+
+        .bg-option.black { background-color: #000000; }
+        .bg-option.dark-grey { background-color: #1a1a1a; }
+        .bg-option.white { background-color: #ffffff; }
+
+        /* Result wrapper */
+        .result-wrapper {
+            width: 100%;
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            transition: background-color 0.3s ease;
+            position: relative;
         }
 
         #histogramResult {
-            max-width: 100%;
-            border-radius: 8px;
+            width: 100%;
+            border-radius: var(--radius-sm);
             display: none;
+            cursor: zoom-in;
+            transition: transform 0.2s ease;
+        }
+
+        #histogramResult:hover {
+            transform: scale(1.01);
         }
 
         #histogramResult.visible {
             display: block;
+        }
+
+        .result-hint {
+            position: absolute;
+            bottom: 2rem;
+            right: 2rem;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            padding: 0.5rem 0.75rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .result-wrapper:hover .result-hint {
+            opacity: 1;
         }
 
         /* Loading */
@@ -209,7 +566,7 @@
             display: none;
             flex-direction: column;
             align-items: center;
-            gap: 1rem;
+            gap: 1.5rem;
         }
 
         .loading.visible {
@@ -217,24 +574,47 @@
         }
 
         .spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid rgba(255, 255, 255, 0.1);
-            border-top-color: #33FF33;
+            width: 60px;
+            height: 60px;
+            position: relative;
+        }
+
+        .spinner::before,
+        .spinner::after {
+            content: '';
+            position: absolute;
+            inset: 0;
             border-radius: 50%;
+            border: 3px solid transparent;
+        }
+
+        .spinner::before {
+            border-top-color: var(--red);
+            border-right-color: var(--green);
             animation: spin 1s linear infinite;
+        }
+
+        .spinner::after {
+            border-bottom-color: var(--blue);
+            border-left-color: var(--red);
+            animation: spin 1.5s linear infinite reverse;
         }
 
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
 
+        .loading span {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
         /* Metadata */
         .metadata {
-            margin-top: 1rem;
-            padding: 1rem;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 8px;
+            margin-top: 1.5rem;
+            padding: 1.25rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: var(--radius-sm);
             display: none;
             width: 100%;
         }
@@ -243,15 +623,34 @@
             display: block;
         }
 
-        .metadata-row {
+        .metadata-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .metadata-item {
             display: flex;
-            justify-content: space-between;
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
+            flex-direction: column;
+            gap: 0.25rem;
         }
 
         .metadata-label {
-            color: #888;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .metadata-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+        }
+
+        .metadata-colors {
+            grid-column: span 2;
+            margin-top: 0.5rem;
         }
 
         .dominant-colors {
@@ -261,107 +660,234 @@
         }
 
         .color-swatch {
-            width: 30px;
-            height: 30px;
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-sm);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            position: relative;
+        }
+
+        .color-swatch:hover {
+            transform: scale(1.1);
+        }
+
+        .color-swatch::after {
+            content: attr(title);
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.9);
+            padding: 0.25rem 0.5rem;
             border-radius: 4px;
-            border: 2px solid rgba(255, 255, 255, 0.2);
+            font-size: 0.7rem;
+            font-family: 'JetBrains Mono', monospace;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .color-swatch:hover::after {
+            opacity: 1;
         }
 
         /* Error */
         .error {
-            color: #FF3333;
-            padding: 1rem;
-            background: rgba(255, 51, 51, 0.1);
-            border-radius: 8px;
+            color: var(--red);
+            padding: 1rem 1.5rem;
+            background: rgba(255, 59, 59, 0.1);
+            border: 1px solid rgba(255, 59, 59, 0.2);
+            border-radius: var(--radius-sm);
             display: none;
             width: 100%;
             text-align: center;
+            font-size: 0.9rem;
         }
 
         .error.visible {
             display: block;
         }
 
-        /* Background color picker */
-        .bg-picker {
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+        }
+
+        .empty-state-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            border-radius: 50%;
+            background: linear-gradient(135deg,
+                rgba(255, 59, 59, 0.1),
+                rgba(59, 255, 111, 0.1),
+                rgba(59, 139, 255, 0.1)
+            );
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-            margin-bottom: 1rem;
+            justify-content: center;
         }
 
-        .bg-picker-label {
-            font-size: 0.85rem;
-            color: #aaa;
+        .empty-state-icon svg {
+            color: var(--text-muted);
         }
 
-        .bg-options {
+        .empty-state p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        /* Lightbox */
+        .lightbox {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .lightbox.visible {
             display: flex;
-            gap: 0.5rem;
+            opacity: 1;
         }
 
-        .bg-option {
-            width: 32px;
-            height: 32px;
-            border-radius: 6px;
-            border: 2px solid rgba(255, 255, 255, 0.2);
+        .lightbox-content {
+            max-width: 95vw;
+            max-height: 90vh;
+            position: relative;
+        }
+
+        .lightbox-image {
+            max-width: 100%;
+            max-height: 85vh;
+            border-radius: var(--radius);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: -3rem;
+            right: 0;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: var(--text-primary);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
             cursor: pointer;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             transition: all 0.2s ease;
         }
 
-        .bg-option:hover {
+        .lightbox-close:hover {
+            background: rgba(255, 255, 255, 0.2);
             transform: scale(1.1);
         }
 
-        .bg-option.selected {
-            border-color: #33FF33;
-            box-shadow: 0 0 8px rgba(51, 255, 51, 0.4);
+        .lightbox-hint {
+            position: absolute;
+            bottom: -2.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--text-muted);
+            font-size: 0.8rem;
         }
 
-        .bg-option.black {
-            background-color: #000000;
+        /* Download button in lightbox */
+        .lightbox-download {
+            position: absolute;
+            top: -3rem;
+            right: 3.5rem;
+            background: linear-gradient(135deg, var(--green), var(--blue));
+            border: none;
+            color: var(--text-primary);
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-family: inherit;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s ease;
         }
 
-        .bg-option.dark-grey {
-            background-color: #2a2a2a;
+        .lightbox-download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(59, 255, 111, 0.3);
         }
 
-        .bg-option.white {
-            background-color: #ffffff;
+        /* Footer hint */
+        .footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 0.8rem;
         }
 
-        /* Result wrapper for background color */
-        .result-wrapper {
-            padding: 1rem;
-            border-radius: 8px;
-            transition: background-color 0.3s ease;
+        .footer span {
+            background: linear-gradient(90deg, var(--red), var(--green), var(--blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>HistoArt</h1>
-        <p class="subtitle">Transform your images into artistic RGB histograms</p>
+        <header>
+            <h1>HistoArt</h1>
+            <p class="subtitle">Transform your images into artistic RGB histograms</p>
+            <div class="rgb-line"></div>
+        </header>
 
         <div class="main-content">
             <div class="panel">
-                <h2>Upload Image</h2>
+                <div class="panel-header">
+                    <div class="panel-icon upload">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="17 8 12 3 7 8"/>
+                            <line x1="12" y1="3" x2="12" y2="15"/>
+                        </svg>
+                    </div>
+                    <h2>Upload</h2>
+                </div>
 
                 <div class="upload-area" id="uploadArea">
                     <div class="upload-icon">
-                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                             <rect x="2" y="6" width="20" height="14" rx="2"/>
                             <circle cx="12" cy="13" r="4"/>
                             <path d="M5 6V4a1 1 0 0 1 1-1h3"/>
                         </svg>
                     </div>
-                    <strong>Drop image here or click to upload</strong>
-                    <p>Supports JPEG, PNG, WebP, TIFF</p>
+                    <strong>Drop image here or click to browse</strong>
+                    <p>JPEG, PNG, WebP, TIFF</p>
                 </div>
                 <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp,image/tiff">
 
                 <div class="preview-container" id="previewContainer">
-                    <img id="preview" alt="Preview">
+                    <div class="preview-wrapper">
+                        <img id="preview" alt="Preview">
+                        <div class="preview-label" id="previewLabel"></div>
+                    </div>
                 </div>
 
                 <div class="controls">
@@ -371,7 +897,7 @@
                             <option value="elegant_curves">Elegant Curves</option>
                             <option value="minimal">Minimal</option>
                             <option value="neon_glow">Neon Glow</option>
-                            <option value="original">Original</option>
+                            <option value="original" selected>Original</option>
                             <option value="tron">Tron</option>
                             <option value="watercolor">Watercolor</option>
                         </select>
@@ -380,37 +906,55 @@
                     <div class="control-group">
                         <label for="aspectRatio">Aspect Ratio</label>
                         <select id="aspectRatio">
-                            <option value="1.618" selected>Golden Ratio</option>
-                            <option value="1.778">16:9 (Widescreen)</option>
-                            <option value="1.333">4:3 (Classic)</option>
-                            <option value="1.0">1:1 (Square)</option>
-                            <option value="1.5">3:2 (Photo)</option>
-                            <option value="2.333">21:9 (Ultrawide)</option>
+                            <option value="1.618" selected>Golden Ratio (1.618:1)</option>
+                            <option value="1.778">Widescreen (16:9)</option>
+                            <option value="1.333">Classic (4:3)</option>
+                            <option value="1.0">Square (1:1)</option>
+                            <option value="1.5">Photo (3:2)</option>
+                            <option value="2.333">Ultrawide (21:9)</option>
                         </select>
                     </div>
 
-                    <div class="control-group">
-                        <label for="width">Width: <span id="widthValue">1200</span>px</label>
+                    <div class="control-group range-container">
+                        <div class="range-header">
+                            <label for="width">Width</label>
+                            <span class="range-value" id="widthValue">1200px</span>
+                        </div>
                         <input type="range" id="width" min="400" max="2000" value="1200" step="100">
                     </div>
 
-                    <div class="control-group">
-                        <label for="smoothing">Smoothing: <span id="smoothingValue">0.7</span></label>
+                    <div class="control-group range-container">
+                        <div class="range-header">
+                            <label for="smoothing">Smoothing</label>
+                            <span class="range-value" id="smoothingValue">0.7</span>
+                        </div>
                         <input type="range" id="smoothing" min="0" max="1" value="0.7" step="0.1">
                     </div>
                 </div>
 
-                <button class="generate-btn" id="generateBtn" disabled>Generate Histogram</button>
+                <button class="generate-btn" id="generateBtn" disabled>
+                    <span>Generate Histogram</span>
+                </button>
             </div>
 
-            <div class="panel">
-                <h2>Result</h2>
+            <div class="panel result-panel">
+                <div class="panel-header">
+                    <div class="panel-icon result">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 3v18h18"/>
+                            <path d="M18 17V9"/>
+                            <path d="M13 17V5"/>
+                            <path d="M8 17v-3"/>
+                        </svg>
+                    </div>
+                    <h2>Result</h2>
+                </div>
 
                 <div class="bg-picker">
-                    <span class="bg-picker-label">Background:</span>
+                    <span class="bg-picker-label">Background</span>
                     <div class="bg-options">
                         <div class="bg-option black selected" data-color="#000000" title="Black"></div>
-                        <div class="bg-option dark-grey" data-color="#2a2a2a" title="Dark Grey"></div>
+                        <div class="bg-option dark-grey" data-color="#1a1a1a" title="Dark Grey"></div>
                         <div class="bg-option white" data-color="#ffffff" title="White"></div>
                     </div>
                 </div>
@@ -418,33 +962,67 @@
                 <div class="result-area">
                     <div class="loading" id="loading">
                         <div class="spinner"></div>
-                        <span>Generating histogram...</span>
+                        <span>Generating your histogram...</span>
                     </div>
 
                     <div class="error" id="error"></div>
 
                     <div class="result-wrapper" id="resultWrapper" style="background-color: #000000;">
                         <img id="histogramResult" alt="Histogram">
+                        <div class="result-hint">Click to enlarge</div>
                     </div>
 
                     <div class="metadata" id="metadata">
-                        <div class="metadata-row">
-                            <span class="metadata-label">Dimensions</span>
-                            <span id="dimensions"></span>
+                        <div class="metadata-grid">
+                            <div class="metadata-item">
+                                <span class="metadata-label">Dimensions</span>
+                                <span class="metadata-value" id="dimensions"></span>
+                            </div>
+                            <div class="metadata-item">
+                                <span class="metadata-label">Processing Time</span>
+                                <span class="metadata-value" id="processingTime"></span>
+                            </div>
+                            <div class="metadata-item metadata-colors">
+                                <span class="metadata-label">Dominant Colors</span>
+                                <div class="dominant-colors" id="dominantColors"></div>
+                            </div>
                         </div>
-                        <div class="metadata-row">
-                            <span class="metadata-label">Processing Time</span>
-                            <span id="processingTime"></span>
-                        </div>
-                        <div class="metadata-row">
-                            <span class="metadata-label">Dominant Colors</span>
-                        </div>
-                        <div class="dominant-colors" id="dominantColors"></div>
                     </div>
 
-                    <p class="empty" id="emptyState">Upload an image to generate a histogram</p>
+                    <div class="empty-state" id="emptyState">
+                        <div class="empty-state-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M3 3v18h18"/>
+                                <path d="M18 17V9"/>
+                                <path d="M13 17V5"/>
+                                <path d="M8 17v-3"/>
+                            </svg>
+                        </div>
+                        <p>Upload an image to generate a histogram</p>
+                    </div>
                 </div>
             </div>
+        </div>
+
+        <div class="footer">
+            Made with <span>RGB</span>
+        </div>
+    </div>
+
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox">
+        <div class="lightbox-content">
+            <button class="lightbox-close" id="lightboxClose">&times;</button>
+            <a class="lightbox-download" id="lightboxDownload" download="histogram.png">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="7 10 12 15 17 10"/>
+                    <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+                Download
+            </a>
+            <img class="lightbox-image" id="lightboxImage" alt="Histogram Full Size">
+            <div class="lightbox-hint">Press ESC or click outside to close</div>
         </div>
     </div>
 
@@ -453,6 +1031,7 @@
         const fileInput = document.getElementById('fileInput');
         const previewContainer = document.getElementById('previewContainer');
         const preview = document.getElementById('preview');
+        const previewLabel = document.getElementById('previewLabel');
         const generateBtn = document.getElementById('generateBtn');
         const widthInput = document.getElementById('width');
         const widthValue = document.getElementById('widthValue');
@@ -463,6 +1042,10 @@
         const histogramResult = document.getElementById('histogramResult');
         const metadata = document.getElementById('metadata');
         const emptyState = document.getElementById('emptyState');
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImage = document.getElementById('lightboxImage');
+        const lightboxClose = document.getElementById('lightboxClose');
+        const lightboxDownload = document.getElementById('lightboxDownload');
 
         let selectedFile = null;
 
@@ -505,6 +1088,7 @@
             const reader = new FileReader();
             reader.onload = (e) => {
                 preview.src = e.target.result;
+                previewLabel.textContent = file.name;
                 previewContainer.classList.add('visible');
             };
             reader.readAsDataURL(file);
@@ -512,14 +1096,14 @@
 
         // Slider updates
         widthInput.addEventListener('input', () => {
-            widthValue.textContent = widthInput.value;
+            widthValue.textContent = widthInput.value + 'px';
         });
 
         smoothingInput.addEventListener('input', () => {
             smoothingValue.textContent = smoothingInput.value;
         });
 
-        // Validate hex color format for safety
+        // Validate hex color format
         function isValidHexColor(color) {
             return /^#[0-9A-Fa-f]{6}$/.test(color);
         }
@@ -556,23 +1140,26 @@
                 }
 
                 // Display result
-                histogramResult.src = `data:image/png;base64,${data.image}`;
+                const imageSrc = `data:image/png;base64,${data.image}`;
+                histogramResult.src = imageSrc;
                 histogramResult.classList.add('visible');
+
+                // Set up lightbox
+                lightboxImage.src = imageSrc;
+                lightboxDownload.href = imageSrc;
 
                 // Display metadata
                 document.getElementById('dimensions').textContent =
-                    `${data.metadata.width} x ${data.metadata.height}`;
+                    `${data.metadata.width} × ${data.metadata.height}`;
                 document.getElementById('processingTime').textContent =
                     `${data.metadata.processing_time_ms}ms`;
 
-                // Display dominant colors using safe DOM methods
+                // Display dominant colors
                 const colorsContainer = document.getElementById('dominantColors');
-                // Clear existing swatches
                 while (colorsContainer.firstChild) {
                     colorsContainer.removeChild(colorsContainer.firstChild);
                 }
                 data.metadata.dominant_colors.forEach(color => {
-                    // Validate color before using
                     if (isValidHexColor(color)) {
                         const swatch = document.createElement('div');
                         swatch.className = 'color-swatch';
@@ -612,6 +1199,31 @@
                 resultWrapper.style.backgroundColor = option.dataset.color;
             });
         });
+
+        // Lightbox functionality
+        histogramResult.addEventListener('click', () => {
+            lightbox.classList.add('visible');
+            document.body.style.overflow = 'hidden';
+        });
+
+        lightboxClose.addEventListener('click', closeLightbox);
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('visible')) {
+                closeLightbox();
+            }
+        });
+
+        function closeLightbox() {
+            lightbox.classList.remove('visible');
+            document.body.style.overflow = '';
+        }
     </script>
 </body>
 </html>
