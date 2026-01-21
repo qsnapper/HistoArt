@@ -1,4 +1,4 @@
-# Artistic RGB Histogram API
+# HistoArt: Artistic RGB Histogram API
 
 Every image has a color story. ChromaChart reveals it. Upload any photo and receive a beautifully crafted histogram that's accurate enough for analysis and gorgeous enough to frame. Six artistic styles. One simple API.
 
