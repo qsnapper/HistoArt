@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HistoArt - Artistic RGB Histograms</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             box-sizing: border-box;
@@ -12,7 +15,7 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             min-height: 100vh;
             color: #e0e0e0;
@@ -87,8 +90,8 @@
         }
 
         .upload-icon {
-            font-size: 3rem;
             margin-bottom: 0.5rem;
+            color: #888;
         }
 
         #fileInput {
@@ -345,7 +348,13 @@
                 <h2>Upload Image</h2>
 
                 <div class="upload-area" id="uploadArea">
-                    <div class="upload-icon">📷</div>
+                    <div class="upload-icon">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="6" width="20" height="14" rx="2"/>
+                            <circle cx="12" cy="13" r="4"/>
+                            <path d="M5 6V4a1 1 0 0 1 1-1h3"/>
+                        </svg>
+                    </div>
                     <strong>Drop image here or click to upload</strong>
                     <p>Supports JPEG, PNG, WebP, TIFF</p>
                 </div>
@@ -369,16 +378,6 @@
                     </div>
 
                     <div class="control-group">
-                        <label for="width">Width: <span id="widthValue">1200</span>px</label>
-                        <input type="range" id="width" min="400" max="2000" value="1200" step="100">
-                    </div>
-
-                    <div class="control-group">
-                        <label for="smoothing">Smoothing: <span id="smoothingValue">0.7</span></label>
-                        <input type="range" id="smoothing" min="0" max="1" value="0.7" step="0.1">
-                    </div>
-
-                    <div class="control-group">
                         <label for="aspectRatio">Aspect Ratio</label>
                         <select id="aspectRatio">
                             <option value="1.618" selected>Golden Ratio</option>
@@ -388,6 +387,16 @@
                             <option value="1.5">3:2 (Photo)</option>
                             <option value="2.333">21:9 (Ultrawide)</option>
                         </select>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="width">Width: <span id="widthValue">1200</span>px</label>
+                        <input type="range" id="width" min="400" max="2000" value="1200" step="100">
+                    </div>
+
+                    <div class="control-group">
+                        <label for="smoothing">Smoothing: <span id="smoothingValue">0.7</span></label>
+                        <input type="range" id="smoothing" min="0" max="1" value="0.7" step="0.1">
                     </div>
                 </div>
 
