@@ -7,6 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script defer src="https://cloud.umami.is/script.js" data-website-id="ea26e9a7-fb3d-41a6-967a-cf4780a50dff"></script>
     <style>
         :root {
             --red: #ff3b3b;
@@ -1027,6 +1028,13 @@
     </div>
 
     <script>
+        // Umami analytics helper
+        function track(event, data = {}) {
+            if (typeof umami !== 'undefined') {
+                umami.track(event, data);
+            }
+        }
+
         const uploadArea = document.getElementById('uploadArea');
         const fileInput = document.getElementById('fileInput');
         const previewContainer = document.getElementById('previewContainer');
@@ -1085,6 +1093,11 @@
             selectedFile = file;
             generateBtn.disabled = false;
 
+            track('file_upload', {
+                type: file.type,
+                size_kb: Math.round(file.size / 1024)
+            });
+
             const reader = new FileReader();
             reader.onload = (e) => {
                 preview.src = e.target.result;
@@ -1099,8 +1112,25 @@
             widthValue.textContent = widthInput.value + 'px';
         });
 
+        widthInput.addEventListener('change', () => {
+            track('width_change', { width: parseInt(widthInput.value) });
+        });
+
         smoothingInput.addEventListener('input', () => {
             smoothingValue.textContent = smoothingInput.value;
+        });
+
+        smoothingInput.addEventListener('change', () => {
+            track('smoothing_change', { smoothing: parseFloat(smoothingInput.value) });
+        });
+
+        // Dropdown tracking
+        document.getElementById('style').addEventListener('change', (e) => {
+            track('style_change', { style: e.target.value });
+        });
+
+        document.getElementById('aspectRatio').addEventListener('change', (e) => {
+            track('aspect_ratio_change', { ratio: parseFloat(e.target.value) });
         });
 
         // Validate hex color format
@@ -1112,6 +1142,18 @@
         generateBtn.addEventListener('click', async () => {
             if (!selectedFile) return;
 
+            const style = document.getElementById('style').value;
+            const width = widthInput.value;
+            const smoothing = smoothingInput.value;
+            const aspectRatio = document.getElementById('aspectRatio').value;
+
+            track('generate_histogram', {
+                style: style,
+                width: parseInt(width),
+                smoothing: parseFloat(smoothing),
+                aspect_ratio: parseFloat(aspectRatio)
+            });
+
             // Reset UI
             hideError();
             histogramResult.classList.remove('visible');
@@ -1122,10 +1164,10 @@
 
             const formData = new FormData();
             formData.append('image', selectedFile);
-            formData.append('style', document.getElementById('style').value);
-            formData.append('width', widthInput.value);
-            formData.append('smoothing', smoothingInput.value);
-            formData.append('aspect_ratio', document.getElementById('aspectRatio').value);
+            formData.append('style', style);
+            formData.append('width', width);
+            formData.append('smoothing', smoothing);
+            formData.append('aspect_ratio', aspectRatio);
 
             try {
                 const response = await fetch('/api/v1/histogram', {
@@ -1171,8 +1213,14 @@
 
                 metadata.classList.add('visible');
 
+                track('histogram_success', {
+                    processing_time_ms: data.metadata.processing_time_ms,
+                    style: style
+                });
+
             } catch (err) {
                 showError(err.message);
+                track('histogram_error', { error_message: err.message });
             } finally {
                 loading.classList.remove('visible');
                 generateBtn.disabled = false;
@@ -1197,6 +1245,7 @@
                 bgOptions.forEach(opt => opt.classList.remove('selected'));
                 option.classList.add('selected');
                 resultWrapper.style.backgroundColor = option.dataset.color;
+                track('background_change', { color: option.dataset.color });
             });
         });
 
@@ -1204,6 +1253,7 @@
         histogramResult.addEventListener('click', () => {
             lightbox.classList.add('visible');
             document.body.style.overflow = 'hidden';
+            track('lightbox_open');
         });
 
         lightboxClose.addEventListener('click', closeLightbox);
@@ -1224,6 +1274,11 @@
             lightbox.classList.remove('visible');
             document.body.style.overflow = '';
         }
+
+        // Download tracking
+        lightboxDownload.addEventListener('click', () => {
+            track('download', { style: document.getElementById('style').value });
+        });
     </script>
 </body>
 </html>
